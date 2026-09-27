@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Windows.Media.Control;
@@ -7,6 +7,7 @@ using System.Text.Json;
 
 class Program
 {
+
     static async Task Main(string[] args)
     {
         if (args.Length == 0 || args[0] == "-?" || args[0] == "--help")
@@ -109,12 +110,19 @@ class Program
                         EndTime = endTime,
                         ElapsedTime = currentPosition,
                         Status = playbackStatus,
+                        SourceApp = session.SourceAppUserModelId,
                         ThumbnailBase64 = base64Thumbnail
                     };
 
                     Console.WriteLine(JsonSerializer.Serialize(allData));
                     break;
                 }
+            case "-seek":
+                if (args.Length > 1 && double.TryParse(args[1], out double seconds))
+                {
+                    await session.TryChangePlaybackPositionAsync((long)(seconds * 10000000));
+                }
+                break;
             default:
                 Console.WriteLine("Unknown argument");
                 break;
